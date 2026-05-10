@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Yoda Terminal | Access Granted</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+
+        body {
+            background-color: #0a0a0a;
+            color: #32CD32; /* Неоновый зеленый Йоды */
+            font-family: 'Fira Code', monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .terminal-header {
+            width: 100%;
+            max-width: 900px;
+            border-bottom: 2px solid #32CD32;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #32CD32;
+        }
+
+        .console {
+            width: 100%;
+            max-width: 900px;
+            background: #000;
+            border: 1px solid #32CD32;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(50, 205, 50, 0.2);
+            border-radius: 5px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            border: 1px dashed #32CD32;
+            padding: 15px;
+        }
+
+        input, textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #32CD32;
+            color: #32CD32;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-family: 'Fira Code', monospace;
+            outline: none;
+        }
+
+        button {
+            background: #32CD32;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        button:hover { background: #28a428; }
+
+        .log-entry {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-left: 3px solid #32CD32;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .log-time { color: #888; font-size: 0.8em; }
+        .log-author { font-weight: bold; color: #fff; }
+        .log-msg { margin-top: 5px; }
+        .log-img { max-width: 200px; border: 1px solid #32CD32; margin-top: 10px; display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="terminal-header">
+    <h1>> MASTER_YODA_BDAY_SYSTEM [v3.0]</h1>
+    <p id="status">STATUS: Awaiting input from the Galaxy...</p>
+</div>
+
+<div class="console">
+    <div id="inputForm" class="form-section">
+        <p>> ENTER DATA TO CONGRATULATE:</p>
+        <input type="text" id="nick" placeholder="[CALLSIGN]">
+        <textarea id="wish" placeholder="[MESSAGE]"></textarea>
+        <input type="text" id="imgUrl" placeholder="[IMG_URL_LINK]">
+        <button onclick="sendPost()">Execute Post</button>
+    </div>
+
+    <div id="wall">Initializing Archives...</div>
+</div>
+
+<script>
+    const API_KEY = '$2a$10$olrRaS6Oza4/jOD2kp/i9.MBq833opKJVgn6iYNr8wiGc.5AYF9L2'; // Тот же, что и у Афины
+    const BIN_ID = '6a00f013adc21f119a7f1112';       // НОВЫЙ ID для Йоды
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('gift')) {
+        document.getElementById('inputForm').classList.add('hidden');
+        document.getElementById('status').innerText = "STATUS: ENCRYPTED GIFT MODE ACTIVE";
+    }
+
+    async function loadPosts() {
+        try {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                headers: { 'X-Master-Key': API_KEY }
+            });
+            const data = await res.json();
+            renderWall(data.record.messages || []);
+        } catch (e) { document.getElementById('wall').innerText = "SYSTEM_ERROR: Data corrupted."; }
+    }
+
+    function renderWall(messages) {
+        const wall = document.getElementById('wall');
+        wall.innerHTML = messages.map(m => `
+            <div class="log-entry">
+                <div class="log-time">[${new Date().toLocaleDateString()}]</div>
+                <div class="log-author">FROM: ${m.name}</div>
+                <div class="log-msg">"${m.text}"</div>
+                ${m.img ? `<img src="${m.img}" class="log-img" onerror="this.style.display='none'">` : ''}
+            </div>
+        `).reverse().join('');
+    }
+
+    async function sendPost() {
+        const name = document.getElementById('nick').value;
+        const text = document.getElementById('wish').value;
+        const img = document.getElementById('imgUrl').value;
+
+        if (!name || !text) return alert('ERROR: Fields empty.');
+
+        const btn = document.querySelector('button');
+        btn.innerText = "Processing...";
+        
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': API_KEY }
+        });
+        const currentData = await res.json();
+        const messages = currentData.record.messages || [];
+
+        messages.push({ name, text, img });
+
+        await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+            body: JSON.stringify({ messages })
+        });
+
+        location.reload();
+    }
+
+    loadPosts();
+</script>
+
+</body>
+</html>
