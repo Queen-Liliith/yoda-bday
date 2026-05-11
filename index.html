@@ -1,6 +1,3 @@
-# index.html
-
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -373,7 +370,7 @@
     try {
       const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
         headers: {
-          'X-Access-Key': API_KEY
+          'X-Master-Key': API_KEY
         }
       });
 
@@ -427,7 +424,7 @@
     try {
       const current = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
         headers: {
-          'X-Access-Key': API_KEY
+          'X-Master-Key': API_KEY
         }
       });
 
@@ -438,7 +435,7 @@
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'X-Access-Key': API_KEY
+          'X-Master-Key': API_KEY
         },
         body: JSON.stringify(updated)
       });
