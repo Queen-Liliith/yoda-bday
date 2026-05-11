@@ -143,52 +143,90 @@
     }
 
     .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-    }
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: min(820px, 100%);
+}
 
     .card {
-      background: rgba(12, 21, 41, 0.75);
-      border: 1px solid rgba(113,182,255,0.2);
-      border-radius: 22px;
-      padding: 24px;
-      backdrop-filter: blur(10px);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(74, 126, 255, 0.08);
-    }
+  position: relative;
+  background: rgba(10, 18, 38, 0.72);
+  border: 1px solid rgba(114, 185, 255, 0.22);
+  border-radius: 24px;
+  padding: 30px;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+
+  box-shadow:
+    0 0 30px rgba(62, 120, 255, 0.08),
+    inset 0 0 20px rgba(110, 180, 255, 0.03);
+
+  transition: 0.35s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(141, 205, 255, 0.45);
+
+  box-shadow:
+    0 0 45px rgba(82, 145, 255, 0.2),
+    inset 0 0 25px rgba(110, 180, 255, 0.08);
+}
 
     .card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(to right, transparent, #6db4ff, transparent);
-    }
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(120,190,255,0.05),
+      transparent 30%,
+      transparent 70%,
+      rgba(120,190,255,0.04)
+    );
+
+  pointer-events: none;
+}
+
+.card::after {
+  content: "✦";
+  position: absolute;
+  top: 18px;
+  right: 22px;
+
+  color: rgba(145, 208, 255, 0.7);
+  font-size: 1rem;
+
+  text-shadow: 0 0 12px rgba(130,190,255,0.9);
+}
 
     .from {
-      color: #8cc7ff;
-      font-size: 0.95rem;
-      letter-spacing: 1px;
-      margin-bottom: 18px;
-    }
+  color: #8cc7ff;
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  font-family: 'Orbitron', sans-serif;
+
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(120,190,255,0.15);
+}
 
     .label {
-      color: #ffe59e;
-      margin-top: 16px;
-      margin-bottom: 6px;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-    }
+  color: #ffe59e;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  font-family: 'Orbitron', sans-serif;
+}
 
     .text {
-      color: #ecf5ff;
-      line-height: 1.5;
-      font-size: 1.02rem;
-    }
+  color: #edf6ff;
+  line-height: 1.7;
+  font-size: 1.08rem;
+}
 
     .modal {
       position: fixed;
@@ -392,21 +430,24 @@
     card.className = 'card';
 
     card.innerHTML = `
-      <div class="from">ПЕРЕДАЧА ОТ: ${item.nickname}</div>
+  <div class="from">
+    ✦ ПЕРЕДАЧА ОТ: ${item.nickname}
+  </div>
 
-      <div class="label">ПЕРВОЕ ВОСПОМИНАНИЕ</div>
-      <div class="text">${item.memory}</div>
+  <div class="label">ПЕРВОЕ ВОСПОМИНАНИЕ</div>
+  <div class="text">${item.memory}</div>
 
-      ${item.special ? `
-      <div class="label">ЗА ЧТО ЦЕНЯТ</div>
-      <div class="text">${item.special}</div>
-      ` : ''}
+  ${item.special ? `
+  <div class="label">ЗА ЧТО ЦЕНЯТ</div>
+  <div class="text">${item.special}</div>
+  ` : ''}
 
-      ${item.message ? `
-      <div class="label">СООБЩЕНИЕ</div>
-      <div class="text">${item.message}</div>
-      ` : ''}
-    `;
+  ${item.message ? `
+  <div class="label">СООБЩЕНИЕ ЧЕРЕЗ СИЛУ</div>
+  <div class="text">${item.message}</div>
+  ` : ''}
+
+`;
 
     cards.appendChild(card);
   }
@@ -459,5 +500,3 @@
 
 </body>
 </html>
-    const API_KEY = '$2a$10$olrRaS6Oza4/jOD2kp/i9.MBq833opKJVgn6iYNr8wiGc.5AYF9L2'; // Тот же, что и у Афины
-    const BIN_ID = '6a00f013adc21f119a7f1112';       // НОВЫЙ ID для Йоды
