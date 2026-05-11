@@ -29,7 +29,6 @@
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
 
-        /* Form Container */
         .form-container {
             background: var(--card-bg);
             border: 1px solid var(--glow-color);
@@ -38,12 +37,6 @@
             margin-bottom: 50px;
             display: none; 
             box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         input, textarea {
@@ -71,12 +64,10 @@
             border-radius: 50px;
             transition: 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         button:hover { background: var(--glow-color); color: black; box-shadow: 0 0 20px var(--glow-color); }
 
-        /* Message Cards */
         .card {
             background: var(--card-bg);
             border-left: 4px solid var(--glow-color);
@@ -88,12 +79,12 @@
         }
         .card.visible { opacity: 1; transform: translateY(0); }
 
-        .label { font-family: 'Orbitron'; font-size: 0.7rem; color: var(--accent-color); display: block; margin-bottom: 5px; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .label { font-family: 'Orbitron'; font-size: 0.7rem; color: var(--accent-color); display: block; margin-bottom: 5px; margin-top: 15px; text-transform: uppercase; }
         .sender { font-family: 'Orbitron'; color: var(--glow-color); font-size: 1.3rem; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 10px; }
         .content { font-size: 1rem; line-height: 1.5; white-space: pre-wrap; color: #e0e0e0; }
 
         .action-bar { text-align: center; margin-bottom: 40px; }
-        #loader { text-align:center; font-family: 'Orbitron'; color: var(--glow-color); letter-spacing: 2px; }
+        #loader { text-align:center; font-family: 'Orbitron'; color: var(--glow-color); }
     </style>
 </head>
 <body>
@@ -111,7 +102,7 @@
     <div id="post-form" class="form-container">
         <input type="text" id="form-from" placeholder="Your Callsign (Name)">
         <textarea id="form-memory" placeholder="The Core Memory (Shared Moment)" rows="2"></textarea>
-        <textarea id="form-power" placeholder="Your Superpower (What we value in you)" rows="2"></textarea>
+        <textarea id="form-power" placeholder="Your Superpower (What we value)" rows="2"></textarea>
         <textarea id="form-message" placeholder="Holographic Wish (Your Message)" rows="3"></textarea>
         <button id="submit-btn" onclick="sendData()">Broadcast to Orbit</button>
     </div>
@@ -124,7 +115,6 @@
     const BIN_ID = '6a0145b2adc21f119a80ba7b';
     const API_KEY = '$2a$10$olrRaS6Oza4/jOD2kp/i9.MBq833opKJVgn6iYNr8wiGc.5AYF9L2';
 
-    // Load data from JSONBin
     async function load() {
         try {
             const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -134,7 +124,7 @@
             render(data.record.messages || []);
         } catch (e) { 
             console.error(e);
-            document.getElementById('loader').innerText = "Signal lost. Check connection.";
+            document.getElementById('loader').innerText = "Signal lost.";
         }
     }
 
@@ -143,12 +133,19 @@
         document.getElementById('loader').style.display = 'none';
         container.innerHTML = '';
         
-        // Reverse to show newest messages first
-        [...msgs].reverse().forEach((msg, i) => {
+        // ВАЖНО: Фильтруем пустые записи, чтобы они не отображались
+        const validMessages = msgs.filter(msg => msg.from && msg.from.trim() !== "");
+
+        if (validMessages.length === 0) {
+            container.innerHTML = '<div style="text-align:center; opacity: 0.5; font-family: Orbitron;">NO MESSAGES IN ARCHIVE</div>';
+            return;
+        }
+
+        [...validMessages].reverse().forEach((msg, i) => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <div class="sender">${msg.from || 'Unknown Jedi'}</div>
+                <div class="sender">${msg.from}</div>
                 <span class="label">The Core Memory ✨</span><div class="content">${msg.memory || '---'}</div>
                 <span class="label">Your Superpower 🙌</span><div class="content">${msg.power || '---'}</div>
                 <span class="label">Holographic Wish ❤️</span><div class="content">${msg.message || 'Happy Birthday!'}</div>
@@ -158,34 +155,30 @@
         });
     }
 
-    // Send data to JSONBin
     async function sendData() {
         const btn = document.getElementById('submit-btn');
-        const from = document.getElementById('form-from').value;
-        const memory = document.getElementById('form-memory').value;
-        const power = document.getElementById('form-power').value;
-        const message = document.getElementById('form-message').value;
+        const from = document.getElementById('form-from').value.trim();
+        const memory = document.getElementById('form-memory').value.trim();
+        const power = document.getElementById('form-power').value.trim();
+        const message = document.getElementById('form-message').value.trim();
 
-        if(!from || !message) {
-            alert("Please provide at least a name and a message!");
+        if(!from) {
+            alert("Identification required! Please enter your name.");
             return;
         }
 
         btn.disabled = true;
         btn.innerText = 'TRANSMITTING...';
 
-        const newMsg = { from, memory, power, message };
-
         try {
-            // 1. Get current data
             const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                 headers: { 'X-Master-Key': API_KEY }
             });
             const currentData = await res.json();
             const updatedMessages = currentData.record.messages || [];
-            updatedMessages.push(newMsg);
+            
+            updatedMessages.push({ from, memory, power, message });
 
-            // 2. Update the bin
             await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: 'PUT',
                 headers: {
@@ -197,7 +190,7 @@
 
             location.reload(); 
         } catch (e) {
-            alert('Transmission failed! The Empire might be blocking us.');
+            alert('Transmission failed!');
             btn.disabled = false;
             btn.innerText = 'TRY AGAIN';
         }
