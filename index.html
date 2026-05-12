@@ -3,129 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YODA | GALACTIC ARCHIVE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Comfortaa:wght@300;400&display=swap" rel="stylesheet">
+    <title>YODA | THE KYBER ARCHIVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --glow-color: #00f2ff;
-            --accent-color: #ffd700;
-            --bg-dark: #050508;
-            --card-bg: rgba(20, 20, 35, 0.85);
+            --bg: #02040a;
+            --blue: #00d4ff;
+            --green: #39ff14;
+            --yellow: #ffd700;
+            --purple: #bf00ff;
+            --white: #ffffff;
         }
 
         body {
-            margin: 0; padding: 0;
-            background: var(--bg-dark);
-            color: white;
-            font-family: 'Comfortaa', cursive;
-            min-height: 100vh;
-            background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.15) 0%, transparent 50%), url('https://www.transparenttextures.com/patterns/stardust.png');
+            margin: 0; background: var(--bg); color: #e0f7fa;
+            font-family: 'Share Tech Mono', monospace;
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
             background-attachment: fixed;
         }
 
-        header { text-align: center; padding: 60px 20px 20px; }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 4rem; margin: 0; text-shadow: 0 0 20px var(--glow-color); letter-spacing: 15px; }
-        .tagline { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; color: var(--accent-color); letter-spacing: 3px; margin-top: 10px; text-transform: uppercase; }
+        header { text-align: center; padding: 80px 20px 40px; }
+        h1 { font-family: 'Cinzel', serif; font-size: clamp(2rem, 8vw, 4rem); letter-spacing: 15px; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .motto { color: var(--yellow); font-size: 0.8rem; letter-spacing: 4px; margin-top: 15px; text-transform: uppercase; }
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
 
+        /* Форма выбора кристалла */
         .form-container {
-            background: var(--card-bg);
-            border: 1px solid var(--glow-color);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 50px;
-            display: none; 
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px; border-radius: 4px; margin-bottom: 60px;
+            display: none; backdrop-filter: blur(10px);
         }
+
+        .color-selector { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; justify-content: center; }
+        .color-btn {
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+            border: 2px solid transparent; transition: 0.3s;
+        }
+        .color-btn.selected { border-color: #fff; transform: scale(1.2); box-shadow: 0 0 15px currentColor; }
 
         input, textarea {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 242, 255, 0.3);
-            border-radius: 8px;
-            color: white;
-            padding: 12px;
-            margin-bottom: 15px;
-            font-family: 'Comfortaa';
-            box-sizing: border-box;
-            outline: none;
+            width: 100%; background: transparent; border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff;
+            padding: 12px 0; margin-bottom: 20px; font-family: 'Share Tech Mono'; outline: none;
         }
 
-        input:focus, textarea:focus { border-color: var(--glow-color); }
-
-        button {
-            background: transparent;
-            border: 2px solid var(--glow-color);
-            color: var(--glow-color);
-            padding: 10px 25px;
-            font-family: 'Orbitron';
-            cursor: pointer;
-            border-radius: 50px;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        button:hover { background: var(--glow-color); color: black; box-shadow: 0 0 20px var(--glow-color); }
-
+        /* Карточки-кристаллы */
         .card {
-            background: var(--card-bg);
-            border-left: 4px solid var(--glow-color);
-            border-radius: 0 15px 15px 0;
-            padding: 25px;
-            margin-bottom: 30px;
-            backdrop-filter: blur(5px);
-            opacity: 0; transform: translateY(20px); transition: 0.5s;
+            padding: 30px; margin-bottom: 40px; position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--accent);
+            box-shadow: -10px 0 20px -10px var(--accent);
+            opacity: 0; transform: translateY(20px); transition: 0.8s;
         }
         .card.visible { opacity: 1; transform: translateY(0); }
 
-        .label { font-family: 'Orbitron'; font-size: 0.7rem; color: var(--accent-color); display: block; margin-bottom: 5px; margin-top: 15px; text-transform: uppercase; }
-        .sender { font-family: 'Orbitron'; color: var(--glow-color); font-size: 1.3rem; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 10px; }
-        .content { font-size: 1rem; line-height: 1.5; white-space: pre-wrap; color: #e0e0e0; }
+        .card-meta { font-size: 0.7rem; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
+        .sender { font-family: 'Cinzel'; font-size: 1.4rem; color: #fff; margin-bottom: 10px; }
+        .prophecy { font-size: 1.1rem; line-height: 1.6; font-style: italic; color: #ced4da; }
 
-        .action-bar { text-align: center; margin-bottom: 40px; }
-        #loader { text-align:center; font-family: 'Orbitron'; color: var(--glow-color); }
+        .action-bar { text-align: center; margin-bottom: 50px; }
+        button {
+            background: transparent; border: 1px solid var(--yellow); color: var(--yellow);
+            padding: 10px 30px; font-family: 'Cinzel'; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: var(--yellow); color: #000; box-shadow: 0 0 15px var(--yellow); }
     </style>
 </head>
 <body>
 
 <header>
     <h1>YODA</h1>
-    <div class="tagline">Intercepting transmissions from deep space...</div>
+    <div class="motto">One with the Force, the Universe celebrates you</div>
 </header>
 
 <div class="container">
     <div class="action-bar">
-        <button onclick="document.getElementById('post-form').style.display='block'">Send Transmission</button>
+        <button onclick="document.getElementById('post-form').style.display='block'">+ ADD VISION</button>
     </div>
 
     <div id="post-form" class="form-container">
-        <input type="text" id="form-from" placeholder="Your Callsign (Name)">
-        <textarea id="form-memory" placeholder="The Core Memory (Shared Moment)" rows="2"></textarea>
-        <textarea id="form-power" placeholder="Your Superpower (What we value)" rows="2"></textarea>
-        <textarea id="form-message" placeholder="Holographic Wish (Your Message)" rows="3"></textarea>
-        <button id="submit-btn" onclick="sendData()">Broadcast to Orbit</button>
+        <input type="text" id="in-name" placeholder="Enter your Name (Jedi Identity)...">
+        
+        <div style="text-align:center; font-size: 0.8rem; margin-top: 10px;">Select Kyber Crystal Energy:</div>
+        <div class="color-selector" id="color-picker">
+            <div class="color-btn" data-color="blue" style="background: var(--blue); color: var(--blue);" title="Guardian (Strength)"></div>
+            <div class="color-btn" data-color="green" style="background: var(--green); color: var(--green);" title="Consular (Wisdom)"></div>
+            <div class="color-btn" data-color="yellow" style="background: var(--yellow); color: var(--yellow);" title="Sentinel (Balance)"></div>
+            <div class="color-btn" data-color="purple" style="background: var(--purple); color: var(--purple);" title="Unique (Rare Power)"></div>
+            <div class="color-btn" data-color="white" style="background: var(--white); color: var(--white);" title="Purity (New Paths)"></div>
+        </div>
+
+        <textarea id="in-msg" placeholder="Your Prophecy: What do you see in his future?" rows="4"></textarea>
+        <button id="submit-btn" onclick="sendData()">IMPRINT ON HOLOCRON</button>
     </div>
 
-    <div id="loader">Synchronizing with Archive...</div>
+    <div id="loader" style="text-align:center; opacity:0.5;">SEARCHING THE FORCE...</div>
     <div id="messages-container"></div>
 </div>
 
 <script>
-    const BIN_ID = '6a00f013adc21f119a7f1112';
+    const BIN_ID = '6a00f013adc21f119a7f1112'; 
     const API_KEY = '$2a$10$olrRaS6Oza4/jOD2kp/i9.MBq833opKJVgn6iYNr8wiGc.5AYF9L2';
+    let selectedColor = 'blue';
+
+    // Выбор цвета
+    document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedColor = btn.dataset.color;
+        };
+    });
+    document.querySelector('.color-btn').classList.add('selected');
 
     async function load() {
         try {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?nocache=${Math.random()}`, {
                 headers: { 'X-Master-Key': API_KEY }
             });
             const data = await res.json();
             render(data.record.messages || []);
-        } catch (e) { 
-            console.error(e);
-            document.getElementById('loader').innerText = "Signal lost.";
-        }
+        } catch (e) { document.getElementById('loader').innerText = "CONNECTION LOST."; }
     }
 
     function render(msgs) {
@@ -133,22 +133,22 @@
         document.getElementById('loader').style.display = 'none';
         container.innerHTML = '';
         
-        // ВАЖНО: Фильтруем пустые записи, чтобы они не отображались
-        const validMessages = msgs.filter(msg => msg.from && msg.from.trim() !== "");
+        const valid = msgs.filter(m => m.from && m.from.length > 1);
 
-        if (validMessages.length === 0) {
-            container.innerHTML = '<div style="text-align:center; opacity: 0.5; font-family: Orbitron;">NO MESSAGES IN ARCHIVE</div>';
+        if (valid.length === 0) {
+            container.innerHTML = '<div style="text-align:center; opacity:0.3;">NO TRANSMISSIONS YET.</div>';
             return;
         }
 
-        [...validMessages].reverse().forEach((msg, i) => {
+        [...valid].reverse().forEach((msg, i) => {
+            const colorVar = `var(--${msg.color || 'blue'})`;
             const card = document.createElement('div');
             card.className = 'card';
+            card.style.setProperty('--accent', colorVar);
             card.innerHTML = `
+                <div class="card-meta">Force Alignment: ${msg.color || 'Guardian'}</div>
                 <div class="sender">${msg.from}</div>
-                <span class="label">The Core Memory ✨</span><div class="content">${msg.memory || '---'}</div>
-                <span class="label">Your Superpower 🙌</span><div class="content">${msg.power || '---'}</div>
-                <span class="label">Holographic Wish ❤️</span><div class="content">${msg.message || 'Happy Birthday!'}</div>
+                <div class="prophecy">"${msg.message}"</div>
             `;
             container.appendChild(card);
             setTimeout(() => card.classList.add('visible'), i * 150);
@@ -157,43 +157,29 @@
 
     async function sendData() {
         const btn = document.getElementById('submit-btn');
-        const from = document.getElementById('form-from').value.trim();
-        const memory = document.getElementById('form-memory').value.trim();
-        const power = document.getElementById('form-power').value.trim();
-        const message = document.getElementById('form-message').value.trim();
+        const from = document.getElementById('in-name').value.trim();
+        const message = document.getElementById('in-msg').value.trim();
 
-        if(!from) {
-            alert("Identification required! Please enter your name.");
-            return;
-        }
+        if(from.length < 2 || !message) { alert("The Force requires more details."); return; }
 
-        btn.disabled = true;
-        btn.innerText = 'TRANSMITTING...';
+        btn.disabled = true; btn.innerText = 'TRANSMITTING...';
 
         try {
             const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                 headers: { 'X-Master-Key': API_KEY }
             });
             const currentData = await res.json();
-            const updatedMessages = currentData.record.messages || [];
-            
-            updatedMessages.push({ from, memory, power, message });
+            const updated = currentData.record.messages || [];
+            updated.push({ from, message, color: selectedColor });
 
             await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': API_KEY
-                },
-                body: JSON.stringify({ messages: updatedMessages })
+                headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+                body: JSON.stringify({ messages: updated })
             });
 
             location.reload(); 
-        } catch (e) {
-            alert('Transmission failed!');
-            btn.disabled = false;
-            btn.innerText = 'TRY AGAIN';
-        }
+        } catch (e) { alert('Archive rejected transmission.'); btn.disabled = false; }
     }
 
     load();
