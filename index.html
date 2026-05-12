@@ -18,7 +18,7 @@
         body {
             margin: 0; background: var(--bg); color: #e0f7fa;
             font-family: 'Share Tech Mono', monospace;
-            background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.1) 0%, transparent 70%);
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
             background-attachment: fixed;
         }
 
@@ -53,6 +53,8 @@
             border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff;
             padding: 12px 0; margin-bottom: 20px; font-family: 'Share Tech Mono'; outline: none;
         }
+
+        .guide-text { font-size: 0.75rem; color: var(--yellow); margin-bottom: 5px; opacity: 0.8; text-transform: uppercase; }
 
         /* Карточки */
         .card {
@@ -96,16 +98,18 @@
         </div>
 
         <div class="color-selector" id="color-picker">
-            <div class="color-btn" data-color="blue" data-label="Guardian" data-desc="For his strength, reliability, and protection." style="background: var(--blue);"></div>
-            <div class="color-btn" data-color="green" data-label="Consular" data-desc="For his wisdom, deep thoughts, and great advice." style="background: var(--green);"></div>
-            <div class="color-btn" data-color="yellow" data-label="Sentinel" data-desc="For his balance and being a master of all trades." style="background: var(--yellow);"></div>
-            <div class="color-btn" data-color="purple" data-label="Unique Force" data-desc="For his rare personality and bold spirit." style="background: var(--purple);"></div>
-            <div class="color-btn" data-color="white" data-label="Purity" data-desc="For his clear mind and bright new beginnings." style="background: var(--white); border: 1px solid #444;"></div>
+            <div class="color-btn" data-color="blue" data-label="Guardian" data-desc="GUARDIAN: For his strength, reliability, and protection." style="background: var(--blue);"></div>
+            <div class="color-btn" data-color="green" data-label="Consular" data-desc="CONSULAR: For his wisdom, deep thoughts, and great advice." style="background: var(--green);"></div>
+            <div class="color-btn" data-color="yellow" data-label="Sentinel" data-desc="SENTINEL: For his balance and being a master of all trades." style="background: var(--yellow);"></div>
+            <div class="color-btn" data-color="purple" data-label="Unique Force" data-desc="UNIQUE FORCE: For his rare personality and bold spirit." style="background: var(--purple);"></div>
+            <div class="color-btn" data-color="white" data-label="Purity" data-desc="PURITY: For his clear mind and bright new beginnings." style="background: var(--white); border: 1px solid #444;"></div>
         </div>
 
         <div id="color-info" style="color: #aaa; font-style: italic;">Select a crystal to see its meaning...</div>
 
-        <textarea id="in-msg" placeholder="Your Prophecy: What do you see in his future?" rows="4"></textarea>
+        <div class="guide-text">// FOCUS YOUR MIND. REVEAL THE FUTURE:</div>
+        <textarea id="in-msg" placeholder="Example: I foresee that in your next year your power will double and new galaxies will open for you..." rows="4"></textarea>
+        
         <button id="submit-btn" onclick="sendData()">IMPRINT ON HOLOCRON</button>
     </div>
 
@@ -119,7 +123,6 @@
     let selectedColor = 'blue';
     let selectedLabel = 'Guardian';
 
-    // Логика выбора цвета и подсказок
     const colorInfo = document.getElementById('color-info');
     document.querySelectorAll('.color-btn').forEach(btn => {
         btn.onclick = () => {
@@ -134,7 +137,6 @@
         };
     });
 
-    // Установка синего по умолчанию при загрузке
     document.querySelector('[data-color="blue"]').click();
 
     async function load() {
@@ -165,7 +167,7 @@
             card.className = 'card';
             card.style.setProperty('--accent', colorVar);
             card.innerHTML = `
-                <div class="card-meta">Force Aspect: ${msg.label || 'Guardian'}</div>
+                <div class="card-meta">Force Vision: ${msg.label || 'Guardian'}</div>
                 <div class="sender">${msg.from}</div>
                 <div class="prophecy">"${msg.message}"</div>
             `;
