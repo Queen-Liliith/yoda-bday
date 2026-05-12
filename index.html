@@ -18,7 +18,7 @@
         body {
             margin: 0; background: var(--bg); color: #e0f7fa;
             font-family: 'Share Tech Mono', monospace;
-            background-image: radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.1) 0%, transparent 70%);
             background-attachment: fixed;
         }
 
@@ -28,7 +28,7 @@
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
 
-        /* Форма выбора кристалла */
+        /* Форма */
         .form-container {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -36,12 +36,17 @@
             display: none; backdrop-filter: blur(10px);
         }
 
-        .color-selector { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; justify-content: center; }
+        .color-selector { display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap; justify-content: center; }
         .color-btn {
-            width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+            width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
             border: 2px solid transparent; transition: 0.3s;
         }
         .color-btn.selected { border-color: #fff; transform: scale(1.2); box-shadow: 0 0 15px currentColor; }
+
+        #color-info {
+            text-align: center; min-height: 45px; margin-bottom: 20px;
+            font-size: 0.9rem; line-height: 1.4; transition: 0.3s;
+        }
 
         input, textarea {
             width: 100%; background: transparent; border: none;
@@ -49,7 +54,7 @@
             padding: 12px 0; margin-bottom: 20px; font-family: 'Share Tech Mono'; outline: none;
         }
 
-        /* Карточки-кристаллы */
+        /* Карточки */
         .card {
             padding: 30px; margin-bottom: 40px; position: relative;
             background: rgba(255, 255, 255, 0.02);
@@ -86,14 +91,19 @@
     <div id="post-form" class="form-container">
         <input type="text" id="in-name" placeholder="Enter your Name (Jedi Identity)...">
         
-        <div style="text-align:center; font-size: 0.8rem; margin-top: 10px;">Select Kyber Crystal Energy:</div>
-        <div class="color-selector" id="color-picker">
-            <div class="color-btn" data-color="blue" style="background: var(--blue); color: var(--blue);" title="Guardian (Strength)"></div>
-            <div class="color-btn" data-color="green" style="background: var(--green); color: var(--green);" title="Consular (Wisdom)"></div>
-            <div class="color-btn" data-color="yellow" style="background: var(--yellow); color: var(--yellow);" title="Sentinel (Balance)"></div>
-            <div class="color-btn" data-color="purple" style="background: var(--purple); color: var(--purple);" title="Unique (Rare Power)"></div>
-            <div class="color-btn" data-color="white" style="background: var(--white); color: var(--white);" title="Purity (New Paths)"></div>
+        <div style="text-align:center; font-size: 0.9rem; margin-top: 10px; font-family: 'Cinzel'; color: var(--yellow);">
+            SELECT THE ENERGY YOU SEE IN HIM:
         </div>
+
+        <div class="color-selector" id="color-picker">
+            <div class="color-btn" data-color="blue" data-label="Guardian" data-desc="For his strength, reliability, and protection." style="background: var(--blue);"></div>
+            <div class="color-btn" data-color="green" data-label="Consular" data-desc="For his wisdom, deep thoughts, and great advice." style="background: var(--green);"></div>
+            <div class="color-btn" data-color="yellow" data-label="Sentinel" data-desc="For his balance and being a master of all trades." style="background: var(--yellow);"></div>
+            <div class="color-btn" data-color="purple" data-label="Unique Force" data-desc="For his rare personality and bold spirit." style="background: var(--purple);"></div>
+            <div class="color-btn" data-color="white" data-label="Purity" data-desc="For his clear mind and bright new beginnings." style="background: var(--white); border: 1px solid #444;"></div>
+        </div>
+
+        <div id="color-info" style="color: #aaa; font-style: italic;">Select a crystal to see its meaning...</div>
 
         <textarea id="in-msg" placeholder="Your Prophecy: What do you see in his future?" rows="4"></textarea>
         <button id="submit-btn" onclick="sendData()">IMPRINT ON HOLOCRON</button>
@@ -107,16 +117,25 @@
     const BIN_ID = '6a00f013adc21f119a7f1112'; 
     const API_KEY = '$2a$10$olrRaS6Oza4/jOD2kp/i9.MBq833opKJVgn6iYNr8wiGc.5AYF9L2';
     let selectedColor = 'blue';
+    let selectedLabel = 'Guardian';
 
-    // Выбор цвета
+    // Логика выбора цвета и подсказок
+    const colorInfo = document.getElementById('color-info');
     document.querySelectorAll('.color-btn').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             selectedColor = btn.dataset.color;
+            selectedLabel = btn.dataset.label;
+            
+            colorInfo.innerText = btn.dataset.desc;
+            colorInfo.style.color = `var(--${selectedColor})`;
+            colorInfo.style.textShadow = `0 0 10px var(--${selectedColor})`;
         };
     });
-    document.querySelector('.color-btn').classList.add('selected');
+
+    // Установка синего по умолчанию при загрузке
+    document.querySelector('[data-color="blue"]').click();
 
     async function load() {
         try {
@@ -136,7 +155,7 @@
         const valid = msgs.filter(m => m.from && m.from.length > 1);
 
         if (valid.length === 0) {
-            container.innerHTML = '<div style="text-align:center; opacity:0.3;">NO TRANSMISSIONS YET.</div>';
+            container.innerHTML = '<div style="text-align:center; opacity:0.3; margin-top:50px;">NO TRANSMISSIONS YET.</div>';
             return;
         }
 
@@ -146,7 +165,7 @@
             card.className = 'card';
             card.style.setProperty('--accent', colorVar);
             card.innerHTML = `
-                <div class="card-meta">Force Alignment: ${msg.color || 'Guardian'}</div>
+                <div class="card-meta">Force Aspect: ${msg.label || 'Guardian'}</div>
                 <div class="sender">${msg.from}</div>
                 <div class="prophecy">"${msg.message}"</div>
             `;
@@ -170,7 +189,12 @@
             });
             const currentData = await res.json();
             const updated = currentData.record.messages || [];
-            updated.push({ from, message, color: selectedColor });
+            updated.push({ 
+                from, 
+                message, 
+                color: selectedColor,
+                label: selectedLabel 
+            });
 
             await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: 'PUT',
