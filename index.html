@@ -118,6 +118,18 @@
 </div>
 
 <script>
+    // Проверяем, есть ли в ссылке слово 'gift'
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('gift')) {
+    // Добавляем стиль, который спрячет кнопку и форму навсегда для Йоды
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .action-bar, .form-container, header { display: none !important; }
+        header { display: block !important; } /* Заголовок оставим для красоты */
+        h1 { margin-top: 50px; }
+    `;
+    document.head.appendChild(style);
+}
     const BIN_ID = '6a00f013adc21f119a7f1112'; 
     const API_KEY = '$2a$10$olrRaS6Oza4/jOD2kp/i9.MBq833opKJVgn6iYNr8wiGc.5AYF9L2';
     let selectedColor = 'blue';
